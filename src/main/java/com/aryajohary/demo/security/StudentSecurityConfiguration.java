@@ -5,47 +5,37 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+
+import javax.sql.DataSource;
 
 @Configuration
 public class StudentSecurityConfiguration {
 
     @Bean
-    public InMemoryUserDetailsManager userDetailsManager(){
-
-        UserDetails arya = User.builder()
-                .username("arya")
-                .password("{noop}arya")
-                .roles("HOD","Teacher","Student")
-                .build();
-
-        UserDetails shishir = User.builder()
-                .username("shishir")
-                .password("{noop}shishir")
-                .roles("Teacher","Student")
-                .build();
-
-        UserDetails aniket = User.builder()
-                .username("aniket")
-                .password("{noop}aniket")
-                .roles("Student")
-                .build();
-
-        return new InMemoryUserDetailsManager(arya,shishir,aniket);
+    public JdbcUserDetailsManager userDetailsManager(DataSource dataSource){
+        return new JdbcUserDetailsManager(dataSource);
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(
                 configurer -> configurer
-                        .requestMatchers(HttpMethod.GET,"/students").hasRole("STUDENT")
-                        .requestMatchers(HttpMethod.GET, "/students/{studentId}").hasRole("STUDENT")
-                        .requestMatchers(HttpMethod.POST, "/students").hasRole("TEACHER")
-                        .requestMatchers(HttpMethod.PUT, "/students/{studentId}").hasRole("TEACHER")
-                        .requestMatchers(HttpMethod.DELETE, "/students/{studentId}").hasRole("HOD")
+                        .requestMatchers(HttpMethod.GET,"/students")
+                        .hasAnyRole("STUDENT","TEACHER","HOD")
+
+                        .requestMatchers(HttpMethod.GET, "/students/{studentId}")
+                        .hasAnyRole("STUDENT","TEACHER","HOD")
+
+                        .requestMatchers(HttpMethod.POST, "/students")
+                        .hasAnyRole("TEACHER","HOD")
+
+                        .requestMatchers(HttpMethod.PUT, "/students/{studentId}")
+                        .hasAnyRole("TEACHER","HOD")
+
+                        .requestMatchers(HttpMethod.DELETE, "/students/{studentId}")
+                        .hasAnyRole("HOD")
         );
 
         httpSecurity.httpBasic(Customizer.withDefaults());
