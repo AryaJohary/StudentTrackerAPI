@@ -1,5 +1,3 @@
--- noinspection SqlDialectInspectionForFile
-
 USE `student_tracker`;
 
 DROP TABLE IF EXISTS `authorities`;
@@ -22,9 +20,9 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` 
 VALUES 
-('arya','{noop}arya',1),
-('shishir','{noop}shishir',1),
-('aniket','{noop}aniket',1);
+('student_user','{noop}student_pass',1),
+('teacher_user','{noop}teacher_pass',1),
+('hod_user','{noop}hod_pass',1);
 
 
 --
@@ -44,8 +42,8 @@ CREATE TABLE `authorities` (
 
 INSERT INTO `authorities` 
 VALUES 
-('aniket','ROLE_STUDENT'),
-('shishir','ROLE_TEACHER'),
-('arya','ROLE_HOD')
+('student_user','ROLE_STUDENT'),
+('teacher_user','ROLE_TEACHER'),
+('hod_user','ROLE_HOD')
 
 

@@ -18,6 +18,14 @@ public class StudentSecurityConfiguration {
         return new JdbcUserDetailsManager(dataSource);
     }
 
+
+    /***
+     * right now, the users are :-
+     * ('student_user','{noop}student_pass',1),
+     * ('teacher_user','{noop}teacher_pass',1),
+     * ('hod_user','{noop}hod_pass',1);
+     ***/
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(
